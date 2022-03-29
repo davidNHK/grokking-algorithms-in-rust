@@ -48,7 +48,7 @@ export function execute(startNodeId, endNodeId, graph) {
     current: startNodeId,
     endNodeId,
     graph,
-    processedNodes: [startNodeId],
+    processedNodes: [],
   });
 
   const nodeCost = costTable[endNodeId];
