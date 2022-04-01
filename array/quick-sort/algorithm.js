@@ -1,17 +1,16 @@
-export const SORT_ORDER = Object.freeze({
-  ASC: 'asc',
-  DESC: 'desc',
-});
+export const SORT_ODDER = {
+  AFTER: 1,
+  BEFORE: -1,
+  EQUAL: 0,
+};
 
-function quickSort(arr, order) {
+function quickSort(arr, compareFunction) {
   if (arr.length < 2) {
     return arr;
   }
   if (arr.length === 2) {
-    if (order === SORT_ORDER.ASC && arr[0] > arr[1]) {
-      return [arr[1], arr[0]];
-    }
-    if (order === SORT_ORDER.DESC && arr[0] < arr[1]) {
+    const compareResult = compareFunction(arr[0], arr[1]);
+    if (compareResult === SORT_ODDER.AFTER) {
       return [arr[1], arr[0]];
     }
     return arr;
@@ -19,18 +18,20 @@ function quickSort(arr, order) {
   const pivotIndex = Math.floor(Math.random() * (arr.length - 1));
   const [pivot] = arr.splice(pivotIndex, 1);
   const leftPartition = arr.filter(v => {
-    return order === SORT_ORDER.ASC ? v <= pivot : v >= pivot;
+    return [SORT_ODDER.AFTER, SORT_ODDER.EQUAL].includes(
+      compareFunction(pivot, v),
+    );
   });
   const rightPartition = arr.filter(v => {
-    return order === SORT_ORDER.ASC ? v > pivot : v < pivot;
+    return compareFunction(pivot, v) === SORT_ODDER.BEFORE;
   });
   return [].concat(
-    execute(leftPartition, order),
+    quickSort(leftPartition, compareFunction),
     [pivot],
-    execute(rightPartition, order),
+    quickSort(rightPartition, compareFunction),
   );
 }
 
-export function execute(arr, order = SORT_ORDER.ASC) {
-  return quickSort(arr, order);
+export function execute(arr, compareFunction) {
+  return quickSort(arr, compareFunction);
 }
